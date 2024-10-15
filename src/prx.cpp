@@ -2,20 +2,32 @@
 
 #include <cellstatus.h>
 #include <sys/prx.h>
+#include <sys/ppu_thread.h>
+
+#include "game.hpp"
 
 SYS_MODULE_INFO( PsasPs3Hooks, 0, 1, 1);
 SYS_MODULE_START( _PsasPs3Hooks_prx_entry );
+SYS_MODULE_STOP( _PsasPs3Hooks_prx_exit );
 
-SYS_LIB_DECLARE_WITH_STUB( LIBNAME, SYS_LIB_AUTO_EXPORT, STUBNAME );
-SYS_LIB_EXPORT( _PsasPs3Hooks_export_function, LIBNAME );
+sys_ppu_thread_t psas_ppu_thread = SYS_PPU_THREAD_ID_INVALID;
 
-// An exported function is needed to generate the project's PRX stub export library
-extern "C" int _PsasPs3Hooks_export_function(void)
+extern "C" int _PsasPs3Hooks_prx_entry(int argc, char *argv[])
 {
-    return CELL_OK;
+	sys_ppu_thread_create(&psas_ppu_thread, [](uint64_t arg)
+	{
+		InstallHooks();
+		sys_ppu_thread_exit(0);
+	}, 0, 3000, 0x8000, SYS_PPU_THREAD_CREATE_JOINABLE, "PsasPs3Hooks");
+
+	return 0;
 }
 
-extern "C" int _PsasPs3Hooks_prx_entry(void)
+extern "C" int _PsasPs3Hooks_prx_exit(int argc, char *argv[])
 {
-    return SYS_PRX_RESIDENT;
+	uint64_t ret;
+	sys_ppu_thread_join(psas_ppu_thread, &ret);
+	RemoveHooks();
+
+	return 0;
 }

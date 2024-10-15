@@ -47,7 +47,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
-    <TargetExt>.prx</TargetExt>
+    <TargetExt>.sprx</TargetExt>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
@@ -59,10 +59,10 @@
       <CppLanguageStd>Cpp11</CppLanguageStd>
     </ClCompile>
     <Link>
-      <OutputFormat>PRXFile</OutputFormat>
+      <OutputFormat>FSPRXFile</OutputFormat>
     </Link>
     <Link>
-      <AdditionalDependencies>-lgcm_sys_stub;-lgcm_cmdasm;-lsysutil_np_stub;-lnet_stub;-lnetctl_stub;$(SCE_PS3_ROOT)\target\ppu\lib\libc.a;$(SN_PS3_PATH)\ppu\lib\sn\libsn.a;$(SCE_PS3_ROOT)\target\ppu\lib\libm.a;$(SCE_PS3_ROOT)\target\ppu\lib\libio_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\liblv2_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libc_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsysutil_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsyscall.a;$(SCE_PS3_ROOT)\target\ppu\lib\hash\libsha256.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>-lgcm_sys_stub;-lgcm_cmdasm;-lsysutil_np_stub;-lnet_stub;-lnetctl_stub;$(SCE_PS3_ROOT)\target\ppu\lib\libc.a;$(SN_PS3_PATH)\ppu\lib\sn\libsn.a;$(SCE_PS3_ROOT)\target\ppu\lib\libm.a;$(SCE_PS3_ROOT)\target\ppu\lib\libio_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\liblv2_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libc_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsysutil_stub.a;$(SCE_PS3_ROOT)\target\ppu\lib\libsyscall.a;$(SCE_PS3_ROOT)\target\ppu\lib\hash\libsha256.a;$(SCE_PS3_ROOT)\target\ppu\lib\libpsutil.a;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateSnMapFile>FullMapFile</GenerateSnMapFile>
     </Link>
   </ItemDefinitionGroup>
@@ -74,12 +74,22 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\hook.cpp" />
+    <ClCompile Include="src\memory.cpp" />
     <ClCompile Include="src\prx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE" />
     <Text Include="README.md" />
     <Text Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\exports.hpp" />
+    <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\hook.hpp" />
+    <ClInclude Include="include\memory.hpp" />
+    <ClInclude Include="include\powerpc.hpp" />
   </ItemGroup>
   <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
