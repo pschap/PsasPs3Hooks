@@ -36,7 +36,7 @@ void InstallHooks()
 {
 	// Tell the game where and how to insert your hook
 	// void *ReadFile(char *file, int *file_info) @ 0x77554
-	// ReadFile_Hook = new Hook(0x7755C, (uintptr_t)ReadFile_Detour, POWERPC_REGISTERINDEX_R5);
+	ReadFile_Hook = new Hook(0x7755C, (uintptr_t)ReadFile_Detour, POWERPC_REGISTERINDEX_R5);
 }
 
 void RemoveHooks()
