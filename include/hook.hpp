@@ -6,9 +6,6 @@
 #include "memory.hpp"
 #include "powerpc.hpp"
 
-// Debug prints
-#define DEBUG 1
-
 // Marker for definining executable sections of memory
 #define MARK_AS_EXECUTABLE __attribute__((section(".text")))
 

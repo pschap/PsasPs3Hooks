@@ -5,7 +5,7 @@
 #include <sys/ppu_thread.h>
 
 #include "exports.hpp"
-#include "game.hpp"
+#include "psabr.hpp"
 
 SYS_MODULE_INFO( PsasPs3Hooks, 0, 1, 1);
 SYS_MODULE_START( _PsasPs3Hooks_prx_entry );

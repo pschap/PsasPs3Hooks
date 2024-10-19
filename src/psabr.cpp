@@ -1,7 +1,7 @@
 #include <cell/cell_fs.h>
 
 #include "utils.hpp"
-#include "game.hpp"
+#include "psabr.hpp"
 #include "exports.hpp"
 #include "psarc.hpp"
 
@@ -30,8 +30,6 @@ void PsasbrInit_Detour(uint32_t param_1, uint32_t param_2, uint32_t param_3)
 	char *line;
 	char *psarc;
 	char *filename;
-
-	printf("[hook] PsasbrInit	param_1: 0x%lxm param_2: 0x%lx, param_3: 0x%lx\n", param_1, param_2, param_3);
 	
 	lines = ReadAllFilenames(&numLines);
 	printf("Got %d filenames from %s\n", numLines, FILENAMES);
@@ -43,6 +41,10 @@ void PsasbrInit_Detour(uint32_t param_1, uint32_t param_2, uint32_t param_3)
 		{
 			line = lines[i];
 			tokens = str_split(line, ':', NULL);
+
+			if (!tokens)
+				continue;
+
 			psarc = tokens[0];
 			filename = tokens[1];
 
@@ -67,18 +69,15 @@ void PsasbrInit_Detour(uint32_t param_1, uint32_t param_2, uint32_t param_3)
 void MountPsarc_Detour(uint64_t param_1, const char *path)
 {
 	printf("[hook] MountPsarc	param_1: 0x%lx, path: 0x%lx\n", param_1, path);
-	printf("\tLoading PSARC: %s\n", path);
-	HexDump("param_1", (void *)param_1, 0x100, 0x10);
+	if (path)
+		printf("\tLoading PSARC: %s\n", path);
 }
 
 void FUN_004998E0_Detour(uint64_t param_1, uint64_t param_2, uint64_t psarc_info, uint32_t entry_index)
 {
 	char *filename;
 	char *psarc;
-	char *buffer;
 	uint32_t fiosObj;
-
-	printf("[hook] FUN_004998E0		param_1: 0x%lx, param_2: 0x%lx, psarc_info: 0x%lx, entry_index: 0x%lx\n", param_1, param_2, psarc_info, entry_index);
 
 	// Grab the name of the file being read
 	fiosObj = *(uint32_t *)(param_2 + 0x24);
@@ -95,17 +94,28 @@ void FUN_004998E0_Detour(uint64_t param_1, uint64_t param_2, uint64_t psarc_info
 
 void InstallHooks()
 {
+	int fd;
+	CellFsErrno err;
+
 	// void *ReadFile(char *file, int *file_info) @ 0x77554
 	// ReadFile_Hook = new Hook(0x7755C, (uintptr_t)ReadFile_Detour, POWERPC_REGISTERINDEX_R5);
-
-	// int PsasbrInit(undefined4 param_1, int param_2, undefined4 param_3) @ 0x1f8cc
-	PsasbrInit_Hook = new Hook(0x1F8D4, (uintptr_t)PsasbrInit_Detour, POWERPC_REGISTERINDEX_R6);
 
 	// undefined8 MountPsarc(longlong param_1, char *path) @ 0x76818
 	// MountPsarc_Hook = new Hook(0x76820, (uintptr_t)MountPsarc_Detour, POWERPC_REGISTERINDEX_R5);
 
-	// void FUN_004998E0(ulonglong param_1, longlong param_2, PSARC_INFO *psarc_info, uint entry_index) @ 0x4998e0
-	// FUN_004998E0_Hook = new Hook(0x4998F4, (uintptr_t)FUN_004998E0_Detour, POWERPC_REGISTERINDEX_R7);
+	// For PSARC Dumping; check if we have a list of filenames we can read from and insert hooks accordingly
+	err = cellFsOpen(FILENAMES, CELL_FS_O_RDONLY, &fd, NULL, 0);
+	if (err == CELL_FS_SUCCEEDED)
+	{
+		// int PsasbrInit(undefined4 param_1, int param_2, undefined4 param_3) @ 0x1f8cc
+		PsasbrInit_Hook = new Hook(0x1F8D4, (uintptr_t)PsasbrInit_Detour, POWERPC_REGISTERINDEX_R6);
+		cellFsClose(fd);
+	}
+	else
+	{
+		// void FUN_004998E0(ulonglong param_1, longlong param_2, PSARC_INFO *psarc_info, uint entry_index) @ 0x4998e0
+		FUN_004998E0_Hook = new Hook(0x4998F4, (uintptr_t)FUN_004998E0_Detour, POWERPC_REGISTERINDEX_R7);
+	}
 }
 
 void RemoveHooks()

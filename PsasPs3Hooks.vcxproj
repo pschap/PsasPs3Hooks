@@ -75,7 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\file_system.cpp" />
-    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\psabr.cpp" />
     <ClCompile Include="src\hook.cpp" />
     <ClCompile Include="src\memory.cpp" />
     <ClCompile Include="src\prx.cpp" />
@@ -90,7 +90,7 @@
   <ItemGroup>
     <ClInclude Include="include\exports.hpp" />
     <ClInclude Include="include\file_system.hpp" />
-    <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\psabr.hpp" />
     <ClInclude Include="include\hook.hpp" />
     <ClInclude Include="include\memory.hpp" />
     <ClInclude Include="include\powerpc.hpp" />

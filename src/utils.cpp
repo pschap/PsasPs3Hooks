@@ -67,14 +67,11 @@ void RecursiveMkdir(const char *dir)
 	memset(tmp, 0, sizeof(tmp));
 	snprintf(tmp, sizeof(tmp), "%s", dir);
 
-	for (i = strlen(tmp); i >= 0; i--)
-	{
-		if (tmp[i] == '/')
-		{
-			tmp[i] = 0;
-			break;
-		}
-	}
+	i = strlen(tmp);
+	while (tmp[i] != '/')
+		i--;
+	tmp[i] = 0;
+
 	printf("Writing directory: %s...\n", tmp);
 	len = strlen(tmp);
 	if (tmp[len - 1] == '/')

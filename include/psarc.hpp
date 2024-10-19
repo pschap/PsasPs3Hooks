@@ -1,6 +1,6 @@
 #include <cell/cell_fs.h>
 
-#include "game.hpp"
+#include "psabr.hpp"
 #include "utils.hpp"
 #include "exports.hpp"
 
@@ -27,8 +27,8 @@ char **ReadAllFilenames(int *numLines);
 
 /***
 * Load a PSARC and read a file contained in the corresponding PSARC.
+* After the file has been read, dump its contents to our local filesystem.
 * @param psarc the name of the archive
-* @param filename the name of the file to read into memory
-* @returns pointer to filename contents
+* @param filename the name of the file to read into memory and dump
 */
-void *LoadPsarcAndReadFile(char *psarc, char *filename);
+void LoadPsarcAndReadFile(char *psarc, char *filename);

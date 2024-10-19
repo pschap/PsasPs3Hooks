@@ -78,6 +78,7 @@ void WriteMediaInfoToFile(char *psarc, char *filename)
 	size_t filenameLen;
 	CellFsErrno err;
 	char *buffer;
+	char *tmp;
 
 	psarcLen = strlen(psarc);
 	filenameLen = strlen(filename);
@@ -85,6 +86,8 @@ void WriteMediaInfoToFile(char *psarc, char *filename)
 	// Allocate our buffer that we'll write to our file
 	i = 0;
 	buffer = (char *)malloc(psarcLen + filenameLen + 2);
+	if (!buffer)
+		return;
 
 	// Copy our PSARC name and filename into the buffer
 	memcpy(buffer + i, psarc, psarcLen);
@@ -94,7 +97,15 @@ void WriteMediaInfoToFile(char *psarc, char *filename)
 	memcpy(buffer + i, filename, filenameLen);
 	i += filenameLen;
 	buffer[i] = '\n';
-	i++;
+
+	tmp = (char *)malloc(psarcLen + filenameLen + 2);
+	if (tmp)
+	{
+		memcpy(tmp, buffer, psarcLen + filenameLen + 1);
+		tmp[i] = 0;
+		printf("Found file: %s\n", tmp);
+		free(tmp);
+	}
 
 	// Write our buffer to a file
 	err = cellFsOpen(
@@ -106,7 +117,6 @@ void WriteMediaInfoToFile(char *psarc, char *filename)
 	err = cellFsWrite(fd, (const void *)buffer, psarcLen + filenameLen + 2, &sw);
 	API_ERROR(err);
 	free(buffer);
-	buffer = NULL;
 
 	cellFsClose(fd);
 }
@@ -131,15 +141,12 @@ char **ReadAllFilenames(int *numLines)
 	memset(buffer, 0, status.st_size + 1);
 
 	// Try to read our filenames file
-	printf("Opening file %s...\n", FILENAMES);
 	err = cellFsOpen(FILENAMES, CELL_FS_O_RDWR, &fd, NULL, 0);
 	API_ERROR(err);
 
-	printf("Reading file %s...\n", FILENAMES);
 	err = cellFsRead(fd, buffer, status.st_size, &sr);
 	API_ERROR(err);
 	
-	printf("Closing file %s...\n", FILENAMES);
 	err = cellFsClose(fd);
 	API_ERROR(err);
 
@@ -151,7 +158,7 @@ char **ReadAllFilenames(int *numLines)
 	return lines;
 }
 
-void *LoadPsarcAndReadFile(char *psarc, char *filename)
+void LoadPsarcAndReadFile(char *psarc, char *filename)
 {
 	void *buffer;
 	uint32_t pos;
@@ -176,12 +183,12 @@ void *LoadPsarcAndReadFile(char *psarc, char *filename)
 	// First load the PSARC
 	printf("Loading PSARC: %s...\n", (char *)psarc + 1);
 	if (!LoadPsarc(0x2274B10, (char *)(psarc + 1)))
-		return NULL;
+		return;
 
 	// Allocate a wildcard filename (just the filename prepended with a '$')
 	wildcardFilename = (char *)malloc(strlen(filename) + 2);
 	if (!wildcardFilename)
-		return NULL;
+		return;
 
 	wildcardFilename[0] = '$';
 	strcpy(wildcardFilename + 1, filename);
@@ -196,31 +203,33 @@ void *LoadPsarcAndReadFile(char *psarc, char *filename)
 		filenameLen = strlen(filename);
 		pos = 0;
 		outFilename = (char *)malloc(pathLen + psarcLen + filenameLen + 1);
-		strcpy(outFilename + pos, WRITE_PATH);
-		pos += pathLen;
-		strcpy(outFilename + pos, psarc);
-		pos += psarcLen;
-		strcpy(outFilename + pos, wildcardFilename + 1);
-		pos += filenameLen;
-		outFilename[pos] = '\0';
-		printf("Writing file: %s...\n", outFilename);
-		RecursiveMkdir(outFilename);
+		if (outFilename)
+		{
+			strcpy(outFilename + pos, WRITE_PATH);
+			pos += pathLen;
+			strcpy(outFilename + pos, psarc);
+			pos += psarcLen;
+			strcpy(outFilename + pos, wildcardFilename + 1);
+			pos += filenameLen;
+			outFilename[pos] = '\0';
+			printf("Writing file: %s...\n", outFilename);
+			RecursiveMkdir(outFilename);
 
-		// Now write our file!!!
-		err = cellFsOpen(
-			outFilename,
-			CELL_FS_O_RDWR | CELL_FS_O_CREAT,
-			&fd, NULL, 0);
-		API_ERROR(err);
+			// Now write our file
+			err = cellFsOpen(
+				outFilename,
+				CELL_FS_O_RDWR | CELL_FS_O_CREAT,
+				&fd, NULL, 0);
+			API_ERROR(err);
 
-		err = cellFsWrite(fd, (const void *)buffer, fileSize, &sw);
-		cellFsClose(fd);
+			cellFsWrite(fd, (const void *)buffer, fileSize, &sw);
+			cellFsClose(fd);
 
-		free(outFilename);
+			free(outFilename);
+		}
+
 		Free(buffer);
 	}
 
 	free(wildcardFilename);
-
-	return NULL;
 }
