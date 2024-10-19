@@ -4,6 +4,7 @@
 #include <sys/prx.h>
 #include <sys/ppu_thread.h>
 
+#include "exports.hpp"
 #include "game.hpp"
 
 SYS_MODULE_INFO( PsasPs3Hooks, 0, 1, 1);

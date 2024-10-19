@@ -13,7 +13,7 @@
 #define MARK_AS_EXECUTABLE __attribute__((section(".text")))
 
 // Number of bytes in trampoline
-#define TRAMPOLINE_BUFFER_SIZE 312
+#define TRAMPOLINE_BUFFER_SIZE 320
 
 // Maximum number of hooks that can be inserted
 #define MAX_HOOKS 256

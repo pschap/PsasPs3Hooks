@@ -1,11 +1,18 @@
 #pragma once
 #include <stdio.h>
 #include <libpsutil.h>
+#include <cell/cell_fs.h>
+
+// File IO Helper
+#define API_ERROR(x) {if(x!=CELL_FS_SUCCEEDED){printf("error=0x%x\n",x);sys_process_exit(1);}}
 
 #define ARRAYSIZE(a) (sizeof(a) / sizeof(*(a)))
 
 extern "C" void* _sys_malloc(size_t size);
 #define malloc _sys_malloc
+
+extern "C" void* _sys_calloc(size_t nitems, size_t size);
+#define calloc _sys_calloc
 
 extern "C" void _sys_free(void* ptr);
 #define free _sys_free

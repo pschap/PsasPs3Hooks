@@ -74,10 +74,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\file_system.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\hook.cpp" />
     <ClCompile Include="src\memory.cpp" />
     <ClCompile Include="src\prx.cpp" />
+    <ClCompile Include="src\psarc.cpp" />
+    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="LICENSE" />
@@ -86,10 +89,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\exports.hpp" />
+    <ClInclude Include="include\file_system.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\hook.hpp" />
     <ClInclude Include="include\memory.hpp" />
     <ClInclude Include="include\powerpc.hpp" />
+    <ClInclude Include="include\psarc.hpp" />
+    <ClInclude Include="include\utils.hpp" />
   </ItemGroup>
   <Import Condition="'$(ConfigurationType)' == 'Makefile' and Exists('$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets')" Project="$(VCTargetsPath)\Platforms\$(Platform)\SCE.Makefile.$(Platform).targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

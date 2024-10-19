@@ -24,7 +24,8 @@ Hook::Hook(uintptr_t hook_target, uintptr_t detour, PPCRegister register_index)
 	this->id = Hook::InitTrampoline((void *)detour, (void *)hook_target, register_index);
 	memset(this->stolen_instructions, 0, sizeof(this->stolen_instructions));
 
-	this->InstallHook();
+	if (this->id != 0xFF)
+		this->InstallHook();
 }
 
 Hook::~Hook()
@@ -94,7 +95,13 @@ uint8_t Hook::InitTrampoline(void *detour, void *target, PPCRegister register_in
 		}
 
 		// Branch and link to our detour
+		inst = POWERPC_STDU(POWERPC_REGISTERINDEX_SP, -0x40, POWERPC_REGISTERINDEX_SP);
+		WriteProcessMemory(sys_process_getpid(), &Hook::trampoline_buffer[id][tramp_index], &inst, sizeof(inst));
+		tramp_index += sizeof(inst);
 		tramp_index += Hook::Jump(&Hook::trampoline_buffer[id][tramp_index], detour, true, false, register_index);
+		inst = POWERPC_ADDI(POWERPC_REGISTERINDEX_SP, POWERPC_REGISTERINDEX_SP, 0x40);
+		WriteProcessMemory(sys_process_getpid(), &Hook::trampoline_buffer[id][tramp_index], &inst, sizeof(inst));
+		tramp_index += sizeof(inst);
 
 		// Load all saved registers back off of the stack
 		ds = sizeof(uint64_t);
@@ -128,6 +135,8 @@ uint8_t Hook::InitTrampoline(void *detour, void *target, PPCRegister register_in
 
 		return id;
 	}
+
+	return 0xFF;
 }
 
 size_t Hook::Jump(void *destination, const void *branch_target, bool linked, bool preserve_register, PPCRegister register_index)
