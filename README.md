@@ -77,7 +77,7 @@ cover how to get set-up to run everything using RPCS3.
 3. Locate Playstation All-Stars `EBOOT.BIN`. If you've already installed the game in RPCS3, you can find this by right-clicking
 the game icon and choosing `Open Install Folder`. The file should be located under `USRDIR`.
 4. Decrypt `EBOOT.BIN` to an ELF by going into `Utilities->Decrypt PS3 Binaries` in RPCS3. Choose your `EBOOT.BIN`.
-5. Download (SPRXPatcher)[https://github.com/NotNite/SPRXPatcher]. Run the below command:
+5. Download [SPRXPatcher](https://github.com/NotNite/SPRXPatcher). Run the below command:
 	```bash
 	dotnet run --project SPRXPatcher -- ./EBOOT.elf /dev_hdd0/tmp/PsasPs3Hooks.sprx ./PsasPs3Hooks.elf
 4. Place 'PsasPs3Hooks.sprx' in `/dev_hdd0/tmp` in your RPCS3 folder
@@ -92,12 +92,12 @@ To dump the PSARCs, first boot the game. The hooks will first build a list of ev
 The next time you boot the game, the hooks will read this file back and force the game to load every single file in that list into memory.
 Once loaded, memory is then dumped back into your local filesystem under `/dev_hdd0/tmp`. See the below video for a demo of this functionality:
 
-[![PSARC Dumping](https://img.youtube.com/vi/N-OY8vLMyoQ&t=3s/0.jpg)](https://www.youtube.com/watch?v=N-OY8vLMyoQ&t=3s)
+[![PSARC Dumping](https://img.youtube.com/vi/N-OY8vLMyoQ/0.jpg)](https://www.youtube.com/watch?v=N-OY8vLMyoQ&t=3s)
 
 # Acknowledgements
 - Thanks to duck from the RPCS3 discord for helping me get set-up with some general infrastructure and helping
 me figure out how to patch my EBOOT to load my sprx 
-- Thanks to [TheRouletteBoi](https://github.com/TheRouletteBoi), his hooking code for his (Minecraft Mod Menu)[https://github.com/TheRouletteBoi/Minecraft] provided
+- Thanks to [TheRouletteBoi](https://github.com/TheRouletteBoi), his hooking code for his [Minecraft Mod Menu](https://github.com/TheRouletteBoi/Minecraft) provided
 a pretty good foundation for me to get started with writing my own hooking code.
 
 # Questions
